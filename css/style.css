@@ -1,0 +1,15 @@
+body {
+    margin: 0;
+}
+
+#wrapper {
+    width: 100vw;
+    height: 100vh;
+    background: radial-gradient(circle at center, #646d78 0, #59616b, #26292e 100%);
+    overflow: hidden;
+}
+
+#wrapper #renderer {
+    width: 100%;
+    height: 100%;
+}
