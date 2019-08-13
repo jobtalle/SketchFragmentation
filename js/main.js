@@ -1,6 +1,6 @@
 const TIME_STEP_MAX = 0.1;
 const ANGLE_SPEED = 0.1;
-const BREAK_INTERVAL = 1;
+const BREAK_INTERVAL = 0.5;
 
 const wrapper = document.getElementById("wrapper");
 const canvas = document.getElementById("renderer");
