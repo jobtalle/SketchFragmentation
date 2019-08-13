@@ -108,7 +108,7 @@ const Chunk = function() {
                 xStart + (i * xDelta) / riftSegments,
                 yStart + (i * yDelta) / riftSegments);
             const distanceCenter = Math.sqrt(point.x * point.x + point.y * point.y);
-            const shiftMultiplier = 0.5 - Math.cos((i / riftSegments) * Math.PI * 2) * 0.5;
+            const shiftMultiplier = Math.pow(0.5 - Math.cos((i / riftSegments) * Math.PI * 2) * 0.5, Chunk.BREAK_SHIFT_POWER);
             let shift = (Chunk.BREAK_SHIFT_MIN + (Chunk.BREAK_SHIFT_MAX - Chunk.BREAK_SHIFT_MIN) * Math.random()) * shiftMultiplier;
 
             if (inset !== 0) {
@@ -161,14 +161,15 @@ const Chunk = function() {
 
 Chunk.RADIUS_MIN = 120;
 Chunk.INITIAL_POINTS = 50;
-Chunk.INITIAL_RADIUS_MIN = 200;
+Chunk.INITIAL_RADIUS_MIN = 280;
 Chunk.INITIAL_RADIUS_MAX = 300;
 Chunk.BREAK_RADIUS_MIN = Chunk.INITIAL_RADIUS_MAX;
-Chunk.BREAK_LENGTH_MIN = 100;
+Chunk.BREAK_LENGTH_MIN = 50;
 Chunk.BREAK_LENGTH_MAX = 300;
 Chunk.BREAK_POINTS_MIN = 1;
 Chunk.BREAK_POINTS_MAX = 3;
 Chunk.BREAK_SHIFT_MIN = 32;
 Chunk.BREAK_SHIFT_MAX = 64;
+Chunk.BREAK_SHIFT_POWER = 0.5;
 Chunk.GROW_SPEED = 4;
 Chunk.EDGE_LENGTH = (Math.PI * 2 * (Chunk.INITIAL_RADIUS_MIN + (Chunk.INITIAL_RADIUS_MAX - Chunk.INITIAL_RADIUS_MIN))) / Chunk.INITIAL_POINTS;

@@ -80,6 +80,3 @@ window.onresize = resize;
 
 resize();
 requestAnimationFrame(loopFunction);
-
-for (let i = 0; i < 1000; ++i)
-    update(1 / 60);
