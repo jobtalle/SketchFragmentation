@@ -26,6 +26,7 @@ const Chunk = function() {
     };
 
     const pickFragmentationRegion = () => {
+        const breakLength = Chunk.BREAK_LENGTH_MIN + (Chunk.BREAK_LENGTH_MAX - Chunk.BREAK_LENGTH_MIN) * Math.random();
         let highestSquaredDist = 0;
         let highestIndex = 0;
 
@@ -38,13 +39,13 @@ const Chunk = function() {
             }
         }
 
-        let breakLength = 0;
+        let length = 0;
         let indexLowPrevious, indexHighPrevious;
         let indexLow = highestIndex;
         let indexHigh = highestIndex;
         let indexRadius = 0;
 
-        while (breakLength < Chunk.BREAK_LENGTH) {
+        while (length < breakLength) {
             ++indexRadius;
             indexLowPrevious = indexLow;
             indexHighPrevious = indexHigh;
@@ -60,7 +61,7 @@ const Chunk = function() {
             const dxHigh = points[indexHigh].x - points[indexHighPrevious].x;
             const dyHigh = points[indexHigh].y - points[indexHighPrevious].y;
 
-            breakLength += Math.sqrt(dxLow * dxLow + dyLow * dyLow) + Math.sqrt(dxHigh * dxHigh + dyHigh * dyHigh);
+            length += Math.sqrt(dxLow * dxLow + dyLow * dyLow) + Math.sqrt(dxHigh * dxHigh + dyHigh * dyHigh);
         }
 
         return {
@@ -131,7 +132,7 @@ const Chunk = function() {
         for (let i = rift.length; i-- > 0;)
             breakPoints.push(rift[i].copy());
 
-        return new Fragment(breakPoints);
+        return new Fragment(breakPoints, Chunk.GROW_SPEED);
     };
 
     this.update = timeStep => {
@@ -153,10 +154,11 @@ const Chunk = function() {
 Chunk.INITIAL_POINTS = 24;
 Chunk.INITIAL_RADIUS_MIN = 128;
 Chunk.INITIAL_RADIUS_MAX = 196;
-Chunk.BREAK_LENGTH = 128;
+Chunk.BREAK_LENGTH_MIN = 32;
+Chunk.BREAK_LENGTH_MAX = 256;
 Chunk.BREAK_POINTS_MIN = 1;
 Chunk.BREAK_POINTS_MAX = 3;
-Chunk.BREAK_SHIFT_MIN = 4;
-Chunk.BREAK_SHIFT_MAX = 96;
+Chunk.BREAK_SHIFT_MIN = 8;
+Chunk.BREAK_SHIFT_MAX = 128;
 Chunk.GROW_SPEED = 4;
 Chunk.EDGE_LENGTH = (Math.PI * 2 * (Chunk.INITIAL_RADIUS_MIN + (Chunk.INITIAL_RADIUS_MAX - Chunk.INITIAL_RADIUS_MIN))) / Chunk.INITIAL_POINTS;

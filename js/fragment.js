@@ -1,7 +1,9 @@
-const Fragment = function(points) {
+const Fragment = function(points, speed) {
     const angleSpeed = Fragment.ANGLE_SPEED_MIN + (Fragment.ANGLE_SPEED_MAX - Fragment.ANGLE_SPEED_MIN) * Math.random();
     let x = 0;
     let y = 0;
+    let ax = 0;
+    let ay = 0;
     let vx = 0;
     let vy = 0;
     let angle = 0;
@@ -28,8 +30,10 @@ const Fragment = function(points) {
 
         const dist = Math.sqrt(x * x + y * y);
 
-        vx = Fragment.BREAK_SPEED * x / dist;
-        vy = Fragment.BREAK_SPEED * y / dist;
+        ax = Fragment.BREAK_ACCELERATION * x / dist;
+        ay = Fragment.BREAK_ACCELERATION * y / dist;
+        vx = speed * x / dist;
+        vy = speed * y / dist;
     };
 
     this.getX = () => x;
@@ -37,9 +41,11 @@ const Fragment = function(points) {
     this.getRadius = () => radius;
 
     this.update = timeStep => {
+        vx += ax * timeStep;
+        vy += ay * timeStep;
         x += vx * timeStep;
         y += vy * timeStep;
-        angle += angleSpeed * timeStep;
+        angle += Math.sqrt(vx * vx + vy * vy) * angleSpeed * timeStep;
     };
 
     this.draw = context => {
@@ -55,9 +61,9 @@ const Fragment = function(points) {
     position();
 };
 
-Fragment.BREAK_SPEED = 24;
-Fragment.ANGLE_SPEED_MIN = -0.2;
-Fragment.ANGLE_SPEED_MAX = 0.2;
+Fragment.BREAK_ACCELERATION = 4;
+Fragment.ANGLE_SPEED_MIN = -0.004;
+Fragment.ANGLE_SPEED_MAX = 0.004;
 Fragment.COLOR = "rgba(255,255,255,0.25)";
 Fragment.draw = (context, points) => {
     context.fillStyle = Fragment.COLOR;
