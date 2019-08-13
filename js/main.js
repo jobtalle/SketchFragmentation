@@ -1,6 +1,6 @@
 const TIME_STEP_MAX = 0.1;
 const ANGLE_SPEED = 0.1;
-const BREAK_INTERVAL = 2;
+const BREAK_INTERVAL = 1;
 
 const wrapper = document.getElementById("wrapper");
 const canvas = document.getElementById("renderer");
@@ -23,25 +23,30 @@ const update = timeStep => {
         timeStep = TIME_STEP_MAX;
 
     if ((breakTime -= timeStep) < 0) {
+        const fragment = chunk.break();
+
         breakTime = BREAK_INTERVAL;
 
-        fragments.push(chunk.break());
+        if (fragment)
+            fragments.push(fragment);
     }
 
     chunk.update(timeStep);
 
-    for (const fragment of fragments)
-        fragment.update(timeStep);
+    if (fragments.length !== 0) {
+        for (const fragment of fragments)
+            fragment.update(timeStep);
 
-    if (fragmentCheckIndex-- === 0)
-        fragmentCheckIndex = 0;
+        if (fragmentCheckIndex-- === 0)
+            fragmentCheckIndex = 0;
 
-    const fx = fragments[fragmentCheckIndex].getX();
-    const fy = fragments[fragmentCheckIndex].getY();
-    const fd = Math.sqrt(fx * fx + fy * fy) - fragments[fragmentCheckIndex].getRadius();
+        const fx = fragments[fragmentCheckIndex].getX();
+        const fy = fragments[fragmentCheckIndex].getY();
+        const fd = Math.sqrt(fx * fx + fy * fy) - fragments[fragmentCheckIndex].getRadius();
 
-    if (fd > radius)
-        fragments.splice(fragmentCheckIndex, 1);
+        if (fd > radius)
+            fragments.splice(fragmentCheckIndex, 1);
+    }
 
     if ((angle += timeStep * ANGLE_SPEED) > Math.PI * 2)
         angle -= Math.PI * 2;

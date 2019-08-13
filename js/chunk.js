@@ -39,6 +39,9 @@ const Chunk = function() {
             }
         }
 
+        if (highestSquaredDist < Chunk.BREAK_RADIUS_MIN * Chunk.BREAK_RADIUS_MIN)
+            return null;
+
         let length = 0;
         let indexLowPrevious, indexHighPrevious;
         let indexLow = highestIndex;
@@ -72,6 +75,10 @@ const Chunk = function() {
 
     this.break = () => {
         const region = pickFragmentationRegion();
+
+        if (!region)
+            return null;
+
         const xStart = points[region.index].x;
         const yStart = points[region.index].y;
         const xEnd = points[(region.index + region.count + 1) % points.length].x;
@@ -110,7 +117,7 @@ const Chunk = function() {
                 shift += inset * (1 / ((nxSelf * nxRift) + (nySelf * nyRift)));
             }
 
-            shift = Math.min(shift, distanceCenter - Chunk.INITIAL_RADIUS_MIN);
+            shift = Math.min(shift, distanceCenter - Chunk.RADIUS_MIN);
             point.x -= shift * point.x / distanceCenter;
             point.y -= shift * point.y / distanceCenter;
 
@@ -151,9 +158,11 @@ const Chunk = function() {
     initialize();
 };
 
+Chunk.RADIUS_MIN = 96;
 Chunk.INITIAL_POINTS = 36;
-Chunk.INITIAL_RADIUS_MIN = 128;
-Chunk.INITIAL_RADIUS_MAX = 196;
+Chunk.INITIAL_RADIUS_MIN = 192;
+Chunk.INITIAL_RADIUS_MAX = 256;
+Chunk.BREAK_RADIUS_MIN = Chunk.INITIAL_RADIUS_MAX;
 Chunk.BREAK_LENGTH_MIN = 32;
 Chunk.BREAK_LENGTH_MAX = 256;
 Chunk.BREAK_POINTS_MIN = 1;
