@@ -1,18 +1,21 @@
 const TIME_STEP_MAX = 0.1;
 const ANGLE_SPEED = 0.1;
-const BREAK_INTERVAL = 3;
+const BREAK_INTERVAL = 2;
 
 const wrapper = document.getElementById("wrapper");
 const canvas = document.getElementById("renderer");
 const chunk = new Chunk();
 const fragments = [];
+let radius = 0;
 let lastDate = new Date();
 let angle = 0;
 let breakTime = 0;
+let fragmentCheckIndex = 0;
 
 const resize = () => {
     canvas.width = wrapper.offsetWidth;
     canvas.height = wrapper.offsetHeight;
+    radius = Math.sqrt(canvas.width * 0.25 * canvas.width + canvas.height * 0.25 * canvas.height);
 };
 
 const update = timeStep => {
@@ -29,6 +32,16 @@ const update = timeStep => {
 
     for (const fragment of fragments)
         fragment.update(timeStep);
+
+    if (fragmentCheckIndex-- === 0)
+        fragmentCheckIndex = 0;
+
+    const fx = fragments[fragmentCheckIndex].getX();
+    const fy = fragments[fragmentCheckIndex].getY();
+    const fd = Math.sqrt(fx * fx + fy * fy) - fragments[fragmentCheckIndex].getRadius();
+
+    if (fd > radius)
+        fragments.splice(fragmentCheckIndex, 1);
 
     if ((angle += timeStep * ANGLE_SPEED) > Math.PI * 2)
         angle -= Math.PI * 2;

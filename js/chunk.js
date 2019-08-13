@@ -109,7 +109,7 @@ const Chunk = function() {
                 shift += inset * (1 / ((nxSelf * nxRift) + (nySelf * nyRift)));
             }
 
-            shift = Math.max(shift, distanceCenter - Chunk.INITIAL_RADIUS_MIN);
+            shift = Math.min(shift, distanceCenter - Chunk.INITIAL_RADIUS_MIN);
             point.x -= shift * point.x / distanceCenter;
             point.y -= shift * point.y / distanceCenter;
 
@@ -156,7 +156,7 @@ Chunk.INITIAL_RADIUS_MAX = 196;
 Chunk.BREAK_LENGTH = 128;
 Chunk.BREAK_POINTS_MIN = 1;
 Chunk.BREAK_POINTS_MAX = 3;
-Chunk.BREAK_SHIFT_MIN = 8;
-Chunk.BREAK_SHIFT_MAX = 48;
+Chunk.BREAK_SHIFT_MIN = 4;
+Chunk.BREAK_SHIFT_MAX = 96;
 Chunk.GROW_SPEED = 4;
 Chunk.EDGE_LENGTH = (Math.PI * 2 * (Chunk.INITIAL_RADIUS_MIN + (Chunk.INITIAL_RADIUS_MAX - Chunk.INITIAL_RADIUS_MIN))) / Chunk.INITIAL_POINTS;

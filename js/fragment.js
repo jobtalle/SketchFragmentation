@@ -5,6 +5,7 @@ const Fragment = function(points) {
     let vx = 0;
     let vy = 0;
     let angle = 0;
+    let radius = 0;
 
     const position = () => {
         for (const point of points) {
@@ -18,6 +19,11 @@ const Fragment = function(points) {
         for (const point of points) {
             point.x -= x;
             point.y -= y;
+
+            const dist = Math.sqrt(point.x * point.x + point.y * point.y);
+
+            if (dist > radius)
+                radius = dist;
         }
 
         const dist = Math.sqrt(x * x + y * y);
@@ -25,6 +31,10 @@ const Fragment = function(points) {
         vx = Fragment.BREAK_SPEED * x / dist;
         vy = Fragment.BREAK_SPEED * y / dist;
     };
+
+    this.getX = () => x;
+    this.getY = () => y;
+    this.getRadius = () => radius;
 
     this.update = timeStep => {
         x += vx * timeStep;
