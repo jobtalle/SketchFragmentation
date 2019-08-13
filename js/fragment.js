@@ -61,7 +61,7 @@ const Fragment = function(points, speed) {
     position();
 };
 
-Fragment.BREAK_ACCELERATION = 4;
+Fragment.BREAK_ACCELERATION = 3;
 Fragment.ANGLE_SPEED_MIN = -0.004;
 Fragment.ANGLE_SPEED_MAX = 0.004;
 Fragment.COLOR = "rgba(255,255,255,0.25)";
