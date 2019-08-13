@@ -25,13 +25,22 @@ const Chunk = function() {
         }
     };
 
-    this.break = () => {
+    const pickFragmentationRegion = () => {
         const breakIndex = Math.floor(Math.random() * points.length);
         const breakCount = Chunk.BREAK_POINTS_MIN + Math.floor((Chunk.BREAK_POINTS_MAX - Chunk.BREAK_POINTS_MIN + 1) * Math.random());
-        const xStart = points[breakIndex].x;
-        const yStart = points[breakIndex].y;
-        const xEnd = points[(breakIndex + breakCount + 1) % points.length].x;
-        const yEnd = points[(breakIndex + breakCount + 1) % points.length].y;
+
+        return {
+            "index": breakIndex,
+            "count": breakCount
+        };
+    };
+
+    this.break = () => {
+        const region = pickFragmentationRegion();
+        const xStart = points[region.index].x;
+        const yStart = points[region.index].y;
+        const xEnd = points[(region.index + region.count + 1) % points.length].x;
+        const yEnd = points[(region.index + region.count + 1) % points.length].y;
         const xDelta = xEnd - xStart;
         const yDelta = yEnd - yStart;
         const rift = [];
@@ -39,11 +48,11 @@ const Chunk = function() {
         const riftSegments = Math.ceil(riftLength / Chunk.EDGE_LENGTH);
         const nxRift = -yDelta / riftLength;
         const nyRift = xDelta / riftLength;
-        const breakPoints = [points[breakIndex].copy()];
+        const breakPoints = [points[region.index].copy()];
         let inset = 0;
 
-        for (let i = 0; i <= breakCount; ++i) {
-            const point = points[(breakIndex + i + 1) % points.length].copy();
+        for (let i = 0; i <= region.count; ++i) {
+            const point = points[(region.index + i + 1) % points.length].copy();
             const distance = (point.x - xStart) * nxRift + (point.y - yStart) * nyRift;
 
             if (distance > inset)
@@ -75,8 +84,8 @@ const Chunk = function() {
 
         const spliceIndices = [];
 
-        for (let i = 0; i < breakCount; ++i)
-            spliceIndices.push((breakIndex + i + 1) % points.length);
+        for (let i = 0; i < region.count; ++i)
+            spliceIndices.push((region.index + i + 1) % points.length);
 
         spliceIndices.sort((a, b) => b - a);
 
@@ -92,7 +101,12 @@ const Chunk = function() {
     };
 
     this.update = timeStep => {
+        for (const point of points) {
+            const dist = Math.sqrt(point.x * point.x + point.y * point.y);
 
+            point.x += timeStep * Chunk.GROW_SPEED * point.x / dist;
+            point.y += timeStep * Chunk.GROW_SPEED * point.y / dist;
+        }
     };
 
     this.draw = context => {
@@ -109,4 +123,5 @@ Chunk.BREAK_POINTS_MIN = 1;
 Chunk.BREAK_POINTS_MAX = 3;
 Chunk.BREAK_SHIFT_MIN = 8;
 Chunk.BREAK_SHIFT_MAX = 48;
+Chunk.GROW_SPEED = 4;
 Chunk.EDGE_LENGTH = (Math.PI * 2 * (Chunk.INITIAL_RADIUS_MIN + (Chunk.INITIAL_RADIUS_MAX - Chunk.INITIAL_RADIUS_MIN))) / Chunk.INITIAL_POINTS;
