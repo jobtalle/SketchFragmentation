@@ -2,6 +2,7 @@ const TIME_STEP_MAX = 0.1;
 
 const wrapper = document.getElementById("wrapper");
 const canvas = document.getElementById("renderer");
+const chunk = new Chunk();
 let lastDate = new Date();
 
 const resize = () => {
@@ -10,11 +11,21 @@ const resize = () => {
 };
 
 const update = timeStep => {
-    //hearth.update(Math.min(timeStep, TIME_STEP_MAX));
+    if (timeStep > TIME_STEP_MAX)
+        timeStep = TIME_STEP_MAX;
+
+    chunk.update(timeStep);
 
     const context = canvas.getContext("2d");
 
     context.clearRect(0, 0, canvas.width, canvas.height);
+
+    context.save();
+    context.translate(canvas.width * 0.5, canvas.height * 0.5);
+
+    chunk.draw(context);
+
+    context.restore();
 };
 
 const loopFunction = () => {
