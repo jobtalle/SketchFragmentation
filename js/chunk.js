@@ -26,7 +26,7 @@ const Chunk = function() {
     };
 
     const pickFragmentationRegion = () => {
-        const breakLength = Chunk.BREAK_LENGTH_MIN + (Chunk.BREAK_LENGTH_MAX - Chunk.BREAK_LENGTH_MIN) * Math.random();
+        const breakLength = Chunk.BREAK_LENGTH_MIN + (Chunk.BREAK_LENGTH_MAX - Chunk.BREAK_LENGTH_MIN) * Math.pow(Math.random(), Chunk.BREAK_LENGTH_POWER);
         let highestSquaredDist = 0;
         let highestIndex = 0;
 
@@ -166,6 +166,7 @@ Chunk.INITIAL_RADIUS_MAX = 300;
 Chunk.BREAK_RADIUS_MIN = Chunk.INITIAL_RADIUS_MAX;
 Chunk.BREAK_LENGTH_MIN = 50;
 Chunk.BREAK_LENGTH_MAX = 300;
+Chunk.BREAK_LENGTH_POWER = 2.5;
 Chunk.BREAK_POINTS_MIN = 1;
 Chunk.BREAK_POINTS_MAX = 3;
 Chunk.BREAK_SHIFT_MIN = 32;
