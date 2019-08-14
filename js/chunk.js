@@ -41,7 +41,7 @@ const Chunk = function() {
     Beam.LIFE_MAX = 5;
     Beam.RADIUS_MIN = 300;
     Beam.RADIUS_MAX = 1500;
-    Beam.ALPHA = 0.15;
+    Beam.ALPHA = 0.22;
     Beam.ALPHA_POWER = 2;
 
     const points = [];

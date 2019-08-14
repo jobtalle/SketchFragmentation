@@ -64,7 +64,7 @@ const Fragment = function(points, speed) {
 Fragment.BREAK_ACCELERATION = 3;
 Fragment.ANGLE_SPEED_MIN = -0.004;
 Fragment.ANGLE_SPEED_MAX = 0.004;
-Fragment.COLOR = "rgb(156,169,186)";
+Fragment.COLOR = "rgb(245,229,219)";
 Fragment.draw = (context, points) => {
     context.fillStyle = Fragment.COLOR;
 
