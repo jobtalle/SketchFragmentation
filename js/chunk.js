@@ -63,7 +63,6 @@ const Chunk = function() {
     };
 
     const pickFragmentationRegion = bias => {
-        const breakLength = Chunk.BREAK_LENGTH_MIN + (Chunk.BREAK_LENGTH_MAX - Chunk.BREAK_LENGTH_MIN) * Math.pow(Math.random(), Chunk.BREAK_LENGTH_POWER);
         let highestDist = 0;
         let highestIndex = 0;
 
@@ -77,6 +76,8 @@ const Chunk = function() {
                 highestIndex = i;
             }
         }
+
+        const breakLength = Chunk.BREAK_LENGTH_MIN + (Chunk.BREAK_LENGTH_MAX_FACTOR * (Math.PI * 2 * highestDist) - Chunk.BREAK_LENGTH_MIN) * Math.pow(Math.random(), Chunk.BREAK_LENGTH_POWER);
 
         if (highestDist < Chunk.BREAK_RADIUS_MIN)
             return null;
@@ -255,7 +256,7 @@ Chunk.BREAK_BIAS_MAX = 1;
 Chunk.BREAK_BIAS_PHASES = 2;
 Chunk.BREAK_RADIUS_MIN = Chunk.INITIAL_RADIUS_MAX;
 Chunk.BREAK_LENGTH_MIN = 30;
-Chunk.BREAK_LENGTH_MAX = 350;
+Chunk.BREAK_LENGTH_MAX_FACTOR = 0.28;
 Chunk.BREAK_LENGTH_POWER = 2;
 Chunk.BREAK_POINTS_MIN = 1;
 Chunk.BREAK_POINTS_MAX = 3;
