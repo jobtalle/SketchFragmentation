@@ -1,6 +1,6 @@
 const TIME_STEP_MAX = 0.1;
 const ANGLE_SPEED = 0.1;
-const BREAK_INTERVAL = 0.3;
+const BREAK_INTERVAL = 0.2;
 const BIAS_FACTOR = 3;
 
 const wrapper = document.getElementById("wrapper");
