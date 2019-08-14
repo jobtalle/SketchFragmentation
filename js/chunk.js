@@ -62,21 +62,23 @@ const Chunk = function() {
         }
     };
 
-    const pickFragmentationRegion = () => {
+    const pickFragmentationRegion = bias => {
         const breakLength = Chunk.BREAK_LENGTH_MIN + (Chunk.BREAK_LENGTH_MAX - Chunk.BREAK_LENGTH_MIN) * Math.pow(Math.random(), Chunk.BREAK_LENGTH_POWER);
-        let highestSquaredDist = 0;
+        let highestDist = 0;
         let highestIndex = 0;
 
         for (let i = 0; i < points.length; ++i) {
-            const squaredDist = points[i].x * points[i].x + points[i].y * points[i].y;
+            const dist = Math.sqrt(points[i].x * points[i].x + points[i].y * points[i].y);
+            const angle = Math.atan2(points[i].y, points[i].x);
+            const biasFactor = Chunk.BREAK_BIAS_MIN + (Chunk.BREAK_BIAS_MAX - Chunk.BREAK_BIAS_MIN) * (Math.cos((bias - angle) * Chunk.BREAK_BIAS_PHASES) * 0.5 + 0.5);
 
-            if (squaredDist > highestSquaredDist) {
-                highestSquaredDist = squaredDist;
+            if (dist * biasFactor > highestDist) {
+                highestDist = dist * biasFactor;
                 highestIndex = i;
             }
         }
 
-        if (highestSquaredDist < Chunk.BREAK_RADIUS_MIN * Chunk.BREAK_RADIUS_MIN)
+        if (highestDist < Chunk.BREAK_RADIUS_MIN)
             return null;
 
         let length = 0;
@@ -142,8 +144,8 @@ const Chunk = function() {
         };
     };
 
-    this.break = () => {
-        const region = pickFragmentationRegion();
+    this.break = bias => {
+        const region = pickFragmentationRegion(bias);
 
         if (!region)
             return null;
@@ -248,10 +250,13 @@ Chunk.INITIAL_POINTS = 50;
 Chunk.INITIAL_RADIUS_MIN = 210;
 Chunk.INITIAL_RADIUS_MAX = 230;
 Chunk.BREAK_DOT_MIN = 0.6;
+Chunk.BREAK_BIAS_MIN = 0.7;
+Chunk.BREAK_BIAS_MAX = 1;
+Chunk.BREAK_BIAS_PHASES = 2;
 Chunk.BREAK_RADIUS_MIN = Chunk.INITIAL_RADIUS_MAX;
 Chunk.BREAK_LENGTH_MIN = 40;
 Chunk.BREAK_LENGTH_MAX = 400;
-Chunk.BREAK_LENGTH_POWER = 2.5;
+Chunk.BREAK_LENGTH_POWER = 2;
 Chunk.BREAK_POINTS_MIN = 1;
 Chunk.BREAK_POINTS_MAX = 3;
 Chunk.BREAK_SHIFT_MIN = 16;

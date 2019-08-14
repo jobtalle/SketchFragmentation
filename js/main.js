@@ -1,6 +1,7 @@
 const TIME_STEP_MAX = 0.1;
 const ANGLE_SPEED = 0.1;
 const BREAK_INTERVAL = 0.3;
+const BIAS_FACTOR = 3;
 
 const wrapper = document.getElementById("wrapper");
 const canvas = document.getElementById("renderer");
@@ -23,7 +24,7 @@ const update = timeStep => {
         timeStep = TIME_STEP_MAX;
 
     if ((breakTime -= timeStep) < 0) {
-        const fragment = chunk.break();
+        const fragment = chunk.break(angle * -BIAS_FACTOR);
 
         breakTime = BREAK_INTERVAL;
 
