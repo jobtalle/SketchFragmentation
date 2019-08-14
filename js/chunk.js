@@ -8,7 +8,44 @@ const Chunk = function() {
         return new Point(this.x, this.y);
     };
 
+    const Beam = function(start, end) {
+        const lifeTimeInitial = Beam.LIFE_MIN + (Beam.LIFE_MAX - Beam.LIFE_MIN) * Math.random();
+        let lifeTime = lifeTimeInitial;
+
+        this.update = timeStep => {
+            if ((lifeTime -= timeStep) < 0)
+                return true;
+
+            return false;
+        };
+
+        this.draw = context => {
+            const f = lifeTime / lifeTimeInitial;
+            const intensity = 0.5 - 0.5 * Math.cos(Math.pow(f, Beam.ALPHA_POWER) * Math.PI * 2);
+            const gradient = context.createRadialGradient(0, 0, 0, 0, 0, Beam.RADIUS_MIN + (Beam.RADIUS_MAX - Beam.RADIUS_MIN) * (1 - f));
+
+            gradient.addColorStop(0, "rgba(255,255,255," + (Beam.ALPHA * intensity) + ")");
+            gradient.addColorStop(1, "rgba(255,255,255,0)");
+
+            context.fillStyle = gradient;
+            context.beginPath();
+            context.moveTo(0, 0);
+            context.lineTo(Math.cos(start) * Beam.RADIUS_MAX * 2, Math.sin(start) * Beam.RADIUS_MAX * 2);
+            context.lineTo(Math.cos(end) * Beam.RADIUS_MAX * 2, Math.sin(end) * Beam.RADIUS_MAX * 2);
+            context.closePath();
+            context.fill();
+        };
+    };
+
+    Beam.LIFE_MIN = 2;
+    Beam.LIFE_MAX = 5;
+    Beam.RADIUS_MIN = 300;
+    Beam.RADIUS_MAX = 1500;
+    Beam.ALPHA = 0.15;
+    Beam.ALPHA_POWER = 2;
+
     const points = [];
+    const beams = [];
 
     const initialize = () => {
         const step = Math.PI * 2 / Chunk.INITIAL_POINTS;
@@ -111,6 +148,14 @@ const Chunk = function() {
         if (!region)
             return null;
 
+        beams.push(new Beam(
+            Math.atan2(
+                points[region.index].y,
+                points[region.index].x),
+            Math.atan2(
+                points[(region.index + region.count + 1) % points.length].y,
+                points[(region.index + region.count + 1) % points.length].x)));
+
         const xStart = points[region.index].x;
         const yStart = points[region.index].y;
         const xEnd = points[(region.index + region.count + 1) % points.length].x;
@@ -182,9 +227,16 @@ const Chunk = function() {
             point.x += timeStep * Chunk.GROW_SPEED * point.x / dist;
             point.y += timeStep * Chunk.GROW_SPEED * point.y / dist;
         }
+
+        for (let i = beams.length; i-- > 0;)
+            if (beams[i].update(timeStep))
+                beams.splice(i, 1);
     };
 
     this.draw = context => {
+        for (const beam of beams)
+            beam.draw(context);
+
         Fragment.draw(context, points);
     };
 
@@ -202,8 +254,8 @@ Chunk.BREAK_LENGTH_MAX = 500;
 Chunk.BREAK_LENGTH_POWER = 2.5;
 Chunk.BREAK_POINTS_MIN = 1;
 Chunk.BREAK_POINTS_MAX = 3;
-Chunk.BREAK_SHIFT_MIN = 32;
-Chunk.BREAK_SHIFT_MAX = 64;
+Chunk.BREAK_SHIFT_MIN = 16;
+Chunk.BREAK_SHIFT_MAX = 48;
 Chunk.BREAK_SHIFT_POWER = 0.5;
 Chunk.GROW_SPEED = 5;
 Chunk.EDGE_LENGTH = (Math.PI * 2 * (Chunk.INITIAL_RADIUS_MIN + (Chunk.INITIAL_RADIUS_MAX - Chunk.INITIAL_RADIUS_MIN))) / Chunk.INITIAL_POINTS;
