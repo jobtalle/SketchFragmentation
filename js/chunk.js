@@ -44,6 +44,12 @@ const Chunk = function() {
 
         let length = 0;
         let indexLowPrevious, indexHighPrevious;
+        let dxLowPrevious, dyLowPrevious;
+        let dxHighPrevious, dyHighPrevious;
+        let dxLow = 0;
+        let dyLow = 0;
+        let dxHigh = 0;
+        let dyHigh = 0;
         let indexLow = highestIndex;
         let indexHigh = highestIndex;
         let indexRadius = 0;
@@ -53,18 +59,44 @@ const Chunk = function() {
             indexLowPrevious = indexLow;
             indexHighPrevious = indexHigh;
 
+            dxLowPrevious = dxLow;
+            dyLowPrevious = dyLow;
+            dxHighPrevious = dxHigh;
+            dyHighPrevious = dyHigh;
+
             if (indexLow-- === 0)
                 indexLow = points.length - 1;
 
             if (++indexHigh === points.length)
                 indexHigh = 0;
 
-            const dxLow = points[indexLow].x - points[indexLowPrevious].x;
-            const dyLow = points[indexLow].y - points[indexLowPrevious].y;
-            const dxHigh = points[indexHigh].x - points[indexHighPrevious].x;
-            const dyHigh = points[indexHigh].y - points[indexHighPrevious].y;
+            dxLow = points[indexLow].x - points[indexLowPrevious].x;
+            dyLow = points[indexLow].y - points[indexLowPrevious].y;
+            dxHigh = points[indexHigh].x - points[indexHighPrevious].x;
+            dyHigh = points[indexHigh].y - points[indexHighPrevious].y;
 
-            length += Math.sqrt(dxLow * dxLow + dyLow * dyLow) + Math.sqrt(dxHigh * dxHigh + dyHigh * dyHigh);
+            const lengthLow = Math.sqrt(dxLow * dxLow + dyLow * dyLow);
+            const lengthHigh = Math.sqrt(dxHigh * dxHigh + dyHigh * dyHigh);
+
+            dxLow /= lengthLow;
+            dyLow /= lengthLow;
+            dxHigh /= lengthHigh;
+            dyHigh /= lengthHigh;
+
+            if (indexRadius !== 1) {
+                const dotLow = dxLow * dxLowPrevious + dyLow * dyLowPrevious;
+                const dotHigh = dxHigh * dxHighPrevious + dyHigh * dyHighPrevious;
+
+                if (dotLow < Chunk.BREAK_DOT_MIN || dotHigh < Chunk.BREAK_DOT_MIN) {
+                    --indexRadius;
+                    indexLow = indexLowPrevious;
+                    indexHigh = indexHighPrevious;
+
+                    break;
+                }
+            }
+
+            length += lengthLow + lengthHigh;
         }
 
         return {
@@ -163,9 +195,10 @@ Chunk.RADIUS_MIN = 120;
 Chunk.INITIAL_POINTS = 50;
 Chunk.INITIAL_RADIUS_MIN = 280;
 Chunk.INITIAL_RADIUS_MAX = 300;
+Chunk.BREAK_DOT_MIN = 0.6;
 Chunk.BREAK_RADIUS_MIN = Chunk.INITIAL_RADIUS_MAX;
 Chunk.BREAK_LENGTH_MIN = 50;
-Chunk.BREAK_LENGTH_MAX = 300;
+Chunk.BREAK_LENGTH_MAX = 500;
 Chunk.BREAK_LENGTH_POWER = 2.5;
 Chunk.BREAK_POINTS_MIN = 1;
 Chunk.BREAK_POINTS_MAX = 3;
