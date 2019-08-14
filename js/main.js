@@ -24,7 +24,7 @@ const update = timeStep => {
         timeStep = TIME_STEP_MAX;
 
     if ((breakTime -= timeStep) < 0) {
-        const fragment = chunk.break(angle * -BIAS_FACTOR);
+        const fragment = chunk.break(angle * BIAS_FACTOR);
 
         breakTime = BREAK_INTERVAL;
 
