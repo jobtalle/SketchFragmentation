@@ -245,7 +245,7 @@ const Chunk = function() {
     initialize();
 };
 
-Chunk.RADIUS_MIN = 120;
+Chunk.RADIUS_MIN = 80;
 Chunk.INITIAL_POINTS = 50;
 Chunk.INITIAL_RADIUS_MIN = 180;
 Chunk.INITIAL_RADIUS_MAX = 200;
